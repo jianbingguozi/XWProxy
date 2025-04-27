@@ -19,7 +19,11 @@ func Run(cfg *FileConfig) {
 		go func(addr string) {
 			pxy := &Pxy{cfg, addr}
 			log.Printf("HttpPxoy to runing on %s \n", addr)
-			log.Fatalln(http.ListenAndServe(addr, pxy))
+			ln, err := net.Listen("tcp4", addr)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			log.Fatalln(http.Serve(ln, pxy))
 		}(addr)
 	}
 
